@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+
+  app:
+    container_name: flask-wsgi
+    build: .
+    env_file: config/dev.env
+    ports:
+      - ${APP_BIND_PORT}:${APP_BIND_PORT}
+    links:
+      - db
+    volumes:
+      - .:/app
+      - ./aws:/root/.aws
+
+  db:
+    image: amazon/dynamodb-local
+    container_name: dynamodb-local
+    hostname: dynamodb
+    restart: always
+    volumes:
+      - ./my-dynamodb-data:/home/dynamodblocal/data
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/"
